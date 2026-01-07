@@ -83,6 +83,8 @@ jobs:
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
+          enable-AzPSSession: false
+          allow-no-subscriptions: false
 
       - name: Login to Azure Container Registry
         run: |

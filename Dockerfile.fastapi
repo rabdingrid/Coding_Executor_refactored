@@ -26,6 +26,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy executor service code (new refactored structure)
 COPY executor-service/ /app/executor-service/
 
+# Rename directory to use underscore (Python can't import modules with hyphens)
+RUN mv /app/executor-service /app/executor_service
+
 # Create non-root user (ACA requirement)
 RUN useradd -m -u 1000 executor && \
     chown -R executor:executor /app
@@ -44,4 +47,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 # With 2 replicas = 16 concurrent capacity, queue handles the rest
 # Queue system: Gunicorn automatically queues requests beyond concurrent capacity
 # This allows handling 500+ requests with proper queuing
-CMD ["gunicorn", "executor-service.main:app", "--bind", "0.0.0.0:8000", "--workers", "4", "--threads", "2", "--worker-class", "uvicorn.workers.UvicornWorker", "--timeout", "300", "--max-requests", "200", "--max-requests-jitter", "20", "--backlog", "200"]
+CMD ["gunicorn", "executor_service.main:app", "--bind", "0.0.0.0:8000", "--workers", "4", "--threads", "2", "--worker-class", "uvicorn.workers.UvicornWorker", "--timeout", "300", "--max-requests", "200", "--max-requests-jitter", "20", "--backlog", "200"]
